@@ -44,4 +44,40 @@ describe('app routes', () => {
         expect(res.body).toEqual([habitJSON]);
       });
   });
+
+  it('get a habit by id', async() => {
+    const habit = await Habit.create({ name: 'drink water' });
+
+    return request(app)
+      .get(`/api/v1/habits/${habit._id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'drink water',
+          count: 0,
+          __v: 0
+        });
+      });
+  });
+
+  it('can update the count of a habit', async() => {
+    const habit = await Habit.create({ name: 'drink water' });
+
+    return request(app)
+      .patch(`/api/v1/habits/${habit._id}`)
+      .send({ count: 1 })
+      .then(res => {
+        expect(res.body.count).toEqual(1);
+      });
+  });
+
+  it('deletes a habit', async() => {
+    const habit = await Habit.create({ name: 'drink water' });
+
+    return request(app)
+      .delete(`/api/v1/habits/${habit._id}`)
+      .then(res => {
+        expect(res.body.name).toEqual('drink water');
+      });
+  });
 });
